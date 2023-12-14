@@ -22,7 +22,7 @@ You can choose one of the following two methods to build this application:
 3. Afterward, simply install it on your Android phone to use.
 
 **Note:** Due to the limitations of the Compose framework on Android versions, this application
-should be installed on systems running **Android 5.0** or higher.
+should be installed on systems running **Android 8.0** or higher.
 
 #### Contribution
 
