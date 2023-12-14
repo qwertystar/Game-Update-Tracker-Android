@@ -1,31 +1,33 @@
 # Game Update Tracker-Android
 
+[![gpt-3.5-turbo](https://img.shields.io/badge/LLM-gpt--3.5--turbo-green?logo=openai)](https://chat.openai.com/)
+[![文心一言](https://img.shields.io/badge/LLM-%E6%96%87%E5%BF%83%E4%B8%80%E8%A8%80-blue?logo=baidu)](https://yiyan.baidu.com/)
+
 #### 介绍
-使用Jetpack Compose 创建的用以提醒游戏有新版本的Android应用
+
+使用Jetpack Compose 创建的用以提醒游戏有新版本的Android应用。
 
 #### 软件架构
-软件架构说明
 
+软件架构说明
 
 #### 安装教程
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+你可以选择以下两种方法构建这个应用：
 
-#### 使用说明
+1. 克隆这个仓库，并使用Android Studio构建安装包
+2. 在远程仓库托管的网站寻找本仓库的发行版，随附有稳定的已构建好的安装包
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+然后只需安装到你的Android 手机即可使用。
+
+**注意：** 受制于Compose框架对Android版本的限制，这个应用应安装在**Android 5.0**及以上版本的系统中。
 
 #### 参与贡献
 
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
-
+1. Fork 本仓库
+2. 新建 Feat_xxx 分支
+3. 提交代码
+4. 新建 Pull Request
 
 #### 特技
 

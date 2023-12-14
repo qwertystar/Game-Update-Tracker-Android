@@ -1,30 +1,35 @@
 # Game Update Tracker-Android
 
+[![gpt-3.5-turbo](https://img.shields.io/badge/LLM-gpt--3.5--turbo-green?logo=openai)](https://chat.openai.com/)
+[![文心一言](https://img.shields.io/badge/LLM-%E6%96%87%E5%BF%83%E4%B8%80%E8%A8%80-blue?logo=baidu)](https://yiyan.baidu.com/)
+
 #### Description
-使用Jetpack Compose 创建的用以提醒游戏有新版本的Android应用
+
+An Android application created using Jetpack Compose to remind users of a new version of the game.
 
 #### Software Architecture
+
 Software architecture description
 
 #### Installation
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+You can choose one of the following two methods to build this application:
 
-#### Instructions
+1. Clone this repository and use Android Studio to build the installation package.
+2. Look for the release version of this repository hosted on the remote repository website, which
+   includes a stable, pre-built installation package.
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+3. Afterward, simply install it on your Android phone to use.
+
+**Note:** Due to the limitations of the Compose framework on Android versions, this application
+should be installed on systems running **Android 5.0** or higher.
 
 #### Contribution
 
-1.  Fork the repository
-2.  Create Feat_xxx branch
-3.  Commit your code
-4.  Create Pull Request
-
+1. Fork the repository
+2. Create Feat_xxx branch
+3. Commit your code
+4. Create Pull Request
 
 #### Gitee Feature
 
