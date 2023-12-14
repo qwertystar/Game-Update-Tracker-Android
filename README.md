@@ -9,7 +9,8 @@
 
 #### 软件架构
 
-软件架构说明
+该应用使用Jetpack Compose编写界面，并通过ViewModel和StateFlow来管理界面状态。
+主要入口为MainActivity.kt，并且界面部分包含在ui文件夹下的Screen.kt和ViewModel.kt中。同时，应用直接使用JSoup从特定网站进行数据爬取。
 
 #### 安装教程
 

@@ -9,7 +9,11 @@ An Android application created using Jetpack Compose to remind users of a new ve
 
 #### Software Architecture
 
-Software architecture description
+The app is built using Jetpack Compose for the UI, and state management of the UI is handled through
+ViewModel and StateFlow.
+The main entry point is MainActivity.kt, and the UI components are defined in Screen.kt and
+ViewModel.kt within the ui folder.
+Additionally, the app utilizes JSoup to scrape data from a specific website.
 
 #### Installation
 
