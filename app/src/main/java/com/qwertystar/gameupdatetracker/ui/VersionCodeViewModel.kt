@@ -55,12 +55,15 @@ class VersionCodeViewModel : ViewModel() {
         updateFetchingState(true)
         return withContext(Dispatchers.IO) {
             try {
-                val document: Document =
-                    Jsoup.connect("https://mindustrygame.github.io/wiki/").get()
-                println(document)
+                val connect = Jsoup.connect("https://mindustrygame.github.io/wiki/")
+//                爬虫必备请求头
+                val connectHeader = connect.header(
+                    "User-Agent",
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36"
+                )
+                val document: Document = connectHeader.get()
                 val elements: Elements =
                     document.select("a[href^=https://github.com/Anuken/Mindustry/releases/tag/]")
-                println(elements)
                 if (elements.size == 1) {
                     println(elements.first())
                     elements.first()?.text() ?: "第一个元素没有……"
