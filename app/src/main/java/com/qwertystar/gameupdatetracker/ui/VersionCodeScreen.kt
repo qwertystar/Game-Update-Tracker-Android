@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -107,16 +108,28 @@ fun VersionCodeLayout(
                 }
             }
             if (hasNeedUpdate) {
-                Row(
+                Column(
                     modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Bottom
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text(text = "在线版本号")
+                    Text(
+                        text = "在线版本号",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp)
+                            .wrapContentWidth(Alignment.Start),
+                        style = typography.titleSmall
+                    )
                     SelectionContainer {
-                        Text(text = onlineVersion)
+                        Text(
+                            text = onlineVersion,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(end = 16.dp)
+                                .wrapContentWidth(Alignment.End)
+                        )
                     }
                 }
                 Button(onClick = updateNewVersion) {
