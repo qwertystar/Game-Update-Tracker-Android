@@ -66,13 +66,13 @@ class VersionCodeViewModel : ViewModel() {
                     document.select("a[href^=https://github.com/Anuken/Mindustry/releases/tag/]")
                 if (elements.size == 1) {
                     println(elements.first())
-                    elements.first()?.text() ?: "第一个元素没有……"
+                    elements.first()?.text() ?: "已找到对应元素，但是好像网站没有提供对应信息"
                 } else {
                     println("爬虫失败！")
-                    "Not Found"
+                    "未能爬到有效信息，可能是网站改版……"
                 }
             } catch (e: Exception) {
-                "Error occurred: ${e.message}"
+                "错误原因: ${e.message}"
             } finally {
                 updateFetchingState(false)
             }
