@@ -1,6 +1,6 @@
 <resources>
-    <!-- TODO: 设置两种不同的名称，一种短名称在桌面显示，一种在应用详情页显示-->
-    <string name="app_name">游戏更新跟踪</string>
+    <string name="app_name_short">更新跟踪</string>
+    <string name="app_name">游戏更新跟踪器</string>
     <string name="gamename">Mindustry</string>
     <string name="mindustry_anukendev_pvp">《Mindustry》是AnukenDev制作的一款以资源管理为核心的开源塔防游戏。玩家需要建造精密的传送带供应链，提供炮塔弹药，生产建筑材料，保护建筑并抵御敌人。也可以在跨平台多人合作游戏中与朋友一起战斗，或组队进行PVP比赛,或者在沙盒编辑器中研发蓝图。</string>
 </resources>
