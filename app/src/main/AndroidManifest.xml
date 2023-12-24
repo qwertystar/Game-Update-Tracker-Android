@@ -16,8 +16,8 @@
         tools:targetApi="31">
         <activity
             android:name=".MainActivity"
-            android:exported="true"
             android:enabled="false"
+            android:exported="true"
             android:theme="@style/Theme.GameUpdateTracker">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,10 +28,10 @@
         <!--  创建一个专用于桌面短应用名称的alias activity      -->
         <activity-alias
             android:name=".shortNameOfMainActivity"
-            android:label="@string/app_name_short"
-            android:targetActivity=".MainActivity"
             android:enabled="true"
-            android:exported="true">
+            android:exported="true"
+            android:label="@string/app_name_short"
+            android:targetActivity=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
