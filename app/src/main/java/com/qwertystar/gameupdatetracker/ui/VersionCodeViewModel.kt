@@ -57,19 +57,20 @@ class VersionCodeViewModel : ViewModel() {
             try {
                 val connect = Jsoup.connect("https://mindustrygame.github.io/wiki/")
 //                爬虫必备请求头
-                val connectHeader = connect.header(
-                    "User-Agent",
-                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36"
-                )
-                val document: Document = connectHeader.get()
+                    .userAgent(
+                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36"
+                    )
+                    .timeout(3000)
+
+                val document: Document = connect.get()
                 val elements: Elements =
                     document.select("a[href^=https://github.com/Anuken/Mindustry/releases/tag/]")
                 if (elements.size == 1) {
                     println(elements.first())
-                    elements.first()?.text() ?: "已找到对应元素，但是好像网站没有提供对应信息"
+                    elements.first()?.text()
+                        ?: throw Exception("网站改版提示：找到版本信息位置却未找到信息")
                 } else {
-                    println("爬虫失败！")
-                    "未能爬到有效信息，可能是网站改版……"
+                    throw Exception("网站改版提示：未找到版本位置")
                 }
             } catch (e: Exception) {
                 "错误原因: ${e.message}"
