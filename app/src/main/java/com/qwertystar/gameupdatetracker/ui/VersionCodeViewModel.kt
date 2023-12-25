@@ -37,13 +37,32 @@ class VersionCodeViewModel : ViewModel() {
         _uiState.value = _uiState.value.copy(hasNewOnlineVersion = false)
     }
 
+    sealed class SealedFetchVersionCodeResult {
+        data class Success(val versionCode: String) : SealedFetchVersionCodeResult()
+        data class Failed(val reason: String) : SealedFetchVersionCodeResult()
+    }
 
     fun checkNewVersionButtonClicked() {
         viewModelScope.launch {
-            val onlineVersionCode = fetchOnlineVersionCode()
-            _uiState.value = _uiState.value.copy(onlineVersionCode = onlineVersionCode)
-            _uiState.value =
-                _uiState.value.copy(hasNewOnlineVersion = (_uiState.value.localVersionCode != onlineVersionCode))
+            when (val result = fetchOnlineVersionCode()) {
+                is SealedFetchVersionCodeResult.Success -> {
+                    val onlineVersionCode = result.versionCode
+                    _uiState.value = _uiState.value.copy(onlineVersionCode = onlineVersionCode)
+                    if (_uiState.value.localVersionCode == onlineVersionCode) {
+                        println("无更新")
+                    } else {
+                        _uiState.value = _uiState.value.copy(hasNewOnlineVersion = true)
+                    }
+                }
+
+                is SealedFetchVersionCodeResult.Failed -> {
+                    _uiState.value = _uiState.value.copy(
+                        hasFailedFetchOnlineResult = true,
+                        failedFetchedOnlineResult = result.reason,
+                        hasNewOnlineVersion = false
+                    )
+                }
+            }
         }
     }
 
@@ -51,7 +70,13 @@ class VersionCodeViewModel : ViewModel() {
         _uiState.value = _uiState.value.copy(isFetchingOnlineVersion = isFetching)
     }
 
-    private suspend fun fetchOnlineVersionCode(): String {
+    fun clearFailedFetchedResult() {
+        _uiState.value = _uiState.value.copy(
+            hasFailedFetchOnlineResult = false, failedFetchedOnlineResult = ""
+        )
+    }
+
+    private suspend fun fetchOnlineVersionCode(): SealedFetchVersionCodeResult {
         updateFetchingState(true)
         return withContext(Dispatchers.IO) {
             try {
@@ -59,21 +84,24 @@ class VersionCodeViewModel : ViewModel() {
 //                爬虫必备请求头
                     .userAgent(
                         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36"
-                    )
-                    .timeout(3000)
+                    ).timeout(3000)
 
                 val document: Document = connect.get()
                 val elements: Elements =
                     document.select("a[href^=https://github.com/Anuken/Mindustry/releases/tag/]")
                 if (elements.size == 1) {
                     println(elements.first())
-                    elements.first()?.text()
-                        ?: throw Exception("网站改版提示：找到版本信息位置却未找到信息")
+                    val version = elements.first()?.text()
+                    if (version != null) {
+                        SealedFetchVersionCodeResult.Success(version)
+                    } else {
+                        throw Exception("网站改版提示：找到版本信息位置却未找到信息")
+                    }
                 } else {
                     throw Exception("网站改版提示：未找到版本位置")
                 }
             } catch (e: Exception) {
-                "错误原因: ${e.message}"
+                SealedFetchVersionCodeResult.Failed("错误原因: ${e.message}")
             } finally {
                 updateFetchingState(false)
             }
