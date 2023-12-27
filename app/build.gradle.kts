@@ -11,8 +11,8 @@ android {
         applicationId = "com.qwertystar.gameupdatetracker"
         minSdk = 26
         targetSdk = 34
-        versionCode = 2
-        versionName = "1.0.2"
+        versionCode = 3
+        versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
