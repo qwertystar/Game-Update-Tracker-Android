@@ -50,7 +50,7 @@ data class VersionCodeUiState(
     val hasFailedFetchOnlineResult: Boolean = false,
     val failedFetchedOnlineResult: String = "",
 
-//    线上版本与本地版本相同
+//    线上版本与本地版本相同时提醒用户的逻辑值
     val hasSameVersionCode: Boolean = false
 )
 
