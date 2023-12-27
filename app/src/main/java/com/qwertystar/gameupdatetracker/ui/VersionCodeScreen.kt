@@ -10,6 +10,7 @@
 
 package com.qwertystar.gameupdatetracker.ui
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,6 +30,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,10 +40,18 @@ import com.qwertystar.gameupdatetracker.R
 import com.qwertystar.gameupdatetracker.ui.theme.GameUpdateTrackerTheme
 
 data class VersionCodeUiState(
-    val hasNewOnlineVersion: Boolean = false,
+
     val localVersionCode: String = "",
     val onlineVersionCode: String = "",
-    val isFetchingOnlineVersion: Boolean = false
+    val isFetchingOnlineVersion: Boolean = false,
+    //   成功获取到新的版本号
+    val hasNewOnlineVersion: Boolean = false,
+    //    爬到错误的逻辑值和错误原因
+    val hasFailedFetchOnlineResult: Boolean = false,
+    val failedFetchedOnlineResult: String = "",
+
+//    线上版本与本地版本相同
+    val hasSameVersionCode: Boolean = false
 )
 
 @Composable
@@ -66,16 +77,21 @@ fun VersionCodeScreen(
         }
 
 
-        VersionCodeLayout(
-            hasNeedUpdate = versionCodeUiState.hasNewOnlineVersion,
+        VersionCodeLayout(hasNeedUpdate = versionCodeUiState.hasNewOnlineVersion,
             localVersion = versionCodeUiState.localVersionCode,
             onlineVersion = versionCodeUiState.onlineVersionCode,
             onLocalVersionChange = { versionCodeViewModel.handleLocalVersionCodeValueChanged(it) },
             updateNewVersion = { versionCodeViewModel.handleUpdateNewVersionCodeButtonClicked() },
             checkNewVersion = { versionCodeViewModel.checkNewVersionButtonClicked() },
-            isFetching = versionCodeUiState.isFetchingOnlineVersion
-        )
+            isFetching = versionCodeUiState.isFetchingOnlineVersion,
+            hasFailedFetchOnlineResult = versionCodeUiState.hasFailedFetchOnlineResult,
+            failedFetchedOnlineResult = versionCodeUiState.failedFetchedOnlineResult,
+            clearFailedFetchedResult = { versionCodeViewModel.clearFailedFetchedResult() })
 
+//        Toast是系统级提示，未来应该使用SnackBar
+        if (versionCodeUiState.hasSameVersionCode) {
+            Toast.makeText(LocalContext.current, "无更新", Toast.LENGTH_LONG).show()
+        }
     }
 }
 
@@ -88,6 +104,9 @@ fun VersionCodeLayout(
     updateNewVersion: () -> Unit,
     checkNewVersion: () -> Unit,
     isFetching: Boolean,
+    hasFailedFetchOnlineResult: Boolean,
+    failedFetchedOnlineResult: String,
+    clearFailedFetchedResult: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -136,7 +155,18 @@ fun VersionCodeLayout(
                     Text(text = "已确认本地版本更新")
                 }
             }
-
+            if (hasFailedFetchOnlineResult) {
+                SelectionContainer {
+                    Text(
+                        text = failedFetchedOnlineResult,
+                        modifier = Modifier.fillMaxWidth(),
+                        color = Color.Magenta
+                    )
+                }
+                Button(onClick = clearFailedFetchedResult) {
+                    Text(text = "清空错误记录")
+                }
+            }
 
         }
     }

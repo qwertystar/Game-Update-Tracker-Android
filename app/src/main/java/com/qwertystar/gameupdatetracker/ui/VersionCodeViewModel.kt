@@ -13,6 +13,7 @@ package com.qwertystar.gameupdatetracker.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -37,13 +38,38 @@ class VersionCodeViewModel : ViewModel() {
         _uiState.value = _uiState.value.copy(hasNewOnlineVersion = false)
     }
 
+    sealed class SealedFetchVersionCodeResult {
+        data class Success(val versionCode: String) : SealedFetchVersionCodeResult()
+        data class Failed(val reason: String) : SealedFetchVersionCodeResult()
+    }
 
     fun checkNewVersionButtonClicked() {
         viewModelScope.launch {
-            val onlineVersionCode = fetchOnlineVersionCode()
-            _uiState.value = _uiState.value.copy(onlineVersionCode = onlineVersionCode)
-            _uiState.value =
-                _uiState.value.copy(hasNewOnlineVersion = (_uiState.value.localVersionCode != onlineVersionCode))
+            when (val result = fetchOnlineVersionCode()) {
+                is SealedFetchVersionCodeResult.Success -> {
+                    val onlineVersionCode = result.versionCode
+                    _uiState.value = _uiState.value.copy(onlineVersionCode = onlineVersionCode)
+                    if (_uiState.value.localVersionCode == onlineVersionCode) {
+                        println("无更新")
+                        _uiState.value = _uiState.value.copy(hasSameVersionCode = true)
+//                        让Toast有时间先生成一个消息框
+//                        Note: Toast的延时由Compose函数中的Toast来控制
+//                        这里只能保证hasSameVersionCode在相对长的时间内发生变化就足够了
+                        delay(100)
+                        _uiState.value = _uiState.value.copy(hasSameVersionCode = false)
+                    } else {
+                        _uiState.value = _uiState.value.copy(hasNewOnlineVersion = true)
+                    }
+                }
+
+                is SealedFetchVersionCodeResult.Failed -> {
+                    _uiState.value = _uiState.value.copy(
+                        hasFailedFetchOnlineResult = true,
+                        failedFetchedOnlineResult = result.reason,
+                        hasNewOnlineVersion = false
+                    )
+                }
+            }
         }
     }
 
@@ -51,28 +77,38 @@ class VersionCodeViewModel : ViewModel() {
         _uiState.value = _uiState.value.copy(isFetchingOnlineVersion = isFetching)
     }
 
-    private suspend fun fetchOnlineVersionCode(): String {
+    fun clearFailedFetchedResult() {
+        _uiState.value = _uiState.value.copy(
+            hasFailedFetchOnlineResult = false, failedFetchedOnlineResult = ""
+        )
+    }
+
+    private suspend fun fetchOnlineVersionCode(): SealedFetchVersionCodeResult {
         updateFetchingState(true)
         return withContext(Dispatchers.IO) {
             try {
                 val connect = Jsoup.connect("https://mindustrygame.github.io/wiki/")
 //                爬虫必备请求头
-                val connectHeader = connect.header(
-                    "User-Agent",
-                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36"
-                )
-                val document: Document = connectHeader.get()
+                    .userAgent(
+                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36"
+                    ).timeout(3000)
+
+                val document: Document = connect.get()
                 val elements: Elements =
                     document.select("a[href^=https://github.com/Anuken/Mindustry/releases/tag/]")
                 if (elements.size == 1) {
                     println(elements.first())
-                    elements.first()?.text() ?: "已找到对应元素，但是好像网站没有提供对应信息"
+                    val version = elements.first()?.text()
+                    if (version != null) {
+                        SealedFetchVersionCodeResult.Success(version)
+                    } else {
+                        throw Exception("网站改版提示：找到版本信息位置却未找到信息")
+                    }
                 } else {
-                    println("爬虫失败！")
-                    "未能爬到有效信息，可能是网站改版……"
+                    throw Exception("网站改版提示：未找到版本位置")
                 }
             } catch (e: Exception) {
-                "错误原因: ${e.message}"
+                SealedFetchVersionCodeResult.Failed("错误原因: ${e.message}")
             } finally {
                 updateFetchingState(false)
             }
