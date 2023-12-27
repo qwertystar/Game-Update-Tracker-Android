@@ -13,6 +13,7 @@ package com.qwertystar.gameupdatetracker.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -50,6 +51,12 @@ class VersionCodeViewModel : ViewModel() {
                     _uiState.value = _uiState.value.copy(onlineVersionCode = onlineVersionCode)
                     if (_uiState.value.localVersionCode == onlineVersionCode) {
                         println("无更新")
+                        _uiState.value = _uiState.value.copy(hasSameVersionCode = true)
+//                        让Toast有时间先生成一个消息框
+//                        Note: Toast的延时由Compose函数中的Toast来控制
+//                        这里只能保证hasSameVersionCode在相对长的时间内发生变化就足够了
+                        delay(100)
+                        _uiState.value = _uiState.value.copy(hasSameVersionCode = false)
                     } else {
                         _uiState.value = _uiState.value.copy(hasNewOnlineVersion = true)
                     }

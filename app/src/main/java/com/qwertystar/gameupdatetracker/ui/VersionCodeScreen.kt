@@ -10,6 +10,7 @@
 
 package com.qwertystar.gameupdatetracker.ui
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,7 +48,10 @@ data class VersionCodeUiState(
     val hasNewOnlineVersion: Boolean = false,
     //    爬到错误的逻辑值和错误原因
     val hasFailedFetchOnlineResult: Boolean = false,
-    val failedFetchedOnlineResult: String = ""
+    val failedFetchedOnlineResult: String = "",
+
+//    线上版本与本地版本相同
+    val hasSameVersionCode: Boolean = false
 )
 
 @Composable
@@ -83,6 +88,10 @@ fun VersionCodeScreen(
             failedFetchedOnlineResult = versionCodeUiState.failedFetchedOnlineResult,
             clearFailedFetchedResult = { versionCodeViewModel.clearFailedFetchedResult() })
 
+//        Toast是系统级提示，未来应该使用SnackBar
+        if (versionCodeUiState.hasSameVersionCode) {
+            Toast.makeText(LocalContext.current, "无更新", Toast.LENGTH_LONG).show()
+        }
     }
 }
 
