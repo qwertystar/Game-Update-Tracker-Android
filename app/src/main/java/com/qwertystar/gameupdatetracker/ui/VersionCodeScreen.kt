@@ -39,20 +39,26 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.qwertystar.gameupdatetracker.R
 import com.qwertystar.gameupdatetracker.ui.theme.GameUpdateTrackerTheme
 
+// 定义fetch后界面的四种互斥状态
+sealed class FetchResultUiState {
+    data class Success(val versionCode: String) : FetchResultUiState()
+    data object VersionSame : FetchResultUiState()
+    data class Failed(val reason: String) : FetchResultUiState()
+    data object NoneFetch : FetchResultUiState()
+
+
+}
+
 data class VersionCodeUiState(
 
     val localVersionCode: String = "",
     val onlineVersionCode: String = "",
     val isFetchingOnlineVersion: Boolean = false,
-    //   成功获取到新的版本号
-    val hasNewOnlineVersion: Boolean = false,
-    //    爬到错误的逻辑值和错误原因
-    val hasFailedFetchOnlineResult: Boolean = false,
-    val failedFetchedOnlineResult: String = "",
 
-//    线上版本与本地版本相同时提醒用户的逻辑值
-    val hasSameVersionCode: Boolean = false
+//    fetch结果状态控制
+    val fetchResultUiState: FetchResultUiState = FetchResultUiState.NoneFetch
 )
+
 
 @Composable
 fun VersionCodeScreen(
@@ -77,37 +83,28 @@ fun VersionCodeScreen(
         }
 
 
-        VersionCodeLayout(hasNeedUpdate = versionCodeUiState.hasNewOnlineVersion,
+        VersionCodeLayout(
             localVersion = versionCodeUiState.localVersionCode,
-            onlineVersion = versionCodeUiState.onlineVersionCode,
             onLocalVersionChange = { versionCodeViewModel.handleLocalVersionCodeValueChanged(it) },
             updateNewVersion = { versionCodeViewModel.handleUpdateNewVersionCodeButtonClicked() },
             checkNewVersion = { versionCodeViewModel.checkNewVersionButtonClicked() },
             isFetching = versionCodeUiState.isFetchingOnlineVersion,
-            hasFailedFetchOnlineResult = versionCodeUiState.hasFailedFetchOnlineResult,
-            failedFetchedOnlineResult = versionCodeUiState.failedFetchedOnlineResult,
-            clearFailedFetchedResult = { versionCodeViewModel.clearFailedFetchedResult() })
-
-//        Toast是系统级提示，未来应该使用SnackBar
-        if (versionCodeUiState.hasSameVersionCode) {
-            Toast.makeText(LocalContext.current, "无更新", Toast.LENGTH_LONG).show()
-        }
+            clearFailedFetchedResult = { versionCodeViewModel.clearFailedFetchedResult() },
+            fetchResult = versionCodeUiState.fetchResultUiState
+        )
     }
 }
 
 @Composable
 fun VersionCodeLayout(
-    hasNeedUpdate: Boolean,
     localVersion: String,
-    onlineVersion: String,
     onLocalVersionChange: (String) -> Unit,
     updateNewVersion: () -> Unit,
     checkNewVersion: () -> Unit,
     isFetching: Boolean,
-    hasFailedFetchOnlineResult: Boolean,
-    failedFetchedOnlineResult: String,
     clearFailedFetchedResult: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    fetchResult: FetchResultUiState
 ) {
 
     Card(
@@ -126,47 +123,61 @@ fun VersionCodeLayout(
                     CircularProgressIndicator()
                 }
             }
-            if (hasNeedUpdate) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(
-                        text = "在线版本号",
+            when (fetchResult) {
+                is FetchResultUiState.Success -> {
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 16.dp)
-                            .wrapContentWidth(Alignment.Start),
-                        style = typography.titleSmall
-                    )
-                    SelectionContainer {
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
                         Text(
-                            text = onlineVersion,
+                            text = "在线版本号",
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(end = 16.dp)
-                                .wrapContentWidth(Alignment.End)
+                                .padding(start = 16.dp)
+                                .wrapContentWidth(Alignment.Start),
+                            style = typography.titleSmall
                         )
+                        SelectionContainer {
+                            Text(
+                                text = fetchResult.versionCode,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(end = 16.dp)
+                                    .wrapContentWidth(Alignment.End)
+                            )
+                        }
+                    }
+                    Button(onClick = updateNewVersion) {
+                        Text(text = "已确认本地版本更新")
                     }
                 }
-                Button(onClick = updateNewVersion) {
-                    Text(text = "已确认本地版本更新")
+
+                is FetchResultUiState.Failed -> {
+                    SelectionContainer {
+                        Text(
+                            text = fetchResult.reason,
+                            modifier = Modifier.fillMaxWidth(),
+                            color = Color.Magenta
+                        )
+                    }
+                    Button(onClick = clearFailedFetchedResult) {
+                        Text(text = "清空错误记录")
+                    }
+                }
+
+                is FetchResultUiState.VersionSame -> {
+                    //        Toast是系统级提示，未来应该使用SnackBar
+
+                    Toast.makeText(LocalContext.current, "无更新", Toast.LENGTH_LONG).show()
+                }
+
+                is FetchResultUiState.NoneFetch -> {
+
                 }
             }
-            if (hasFailedFetchOnlineResult) {
-                SelectionContainer {
-                    Text(
-                        text = failedFetchedOnlineResult,
-                        modifier = Modifier.fillMaxWidth(),
-                        color = Color.Magenta
-                    )
-                }
-                Button(onClick = clearFailedFetchedResult) {
-                    Text(text = "清空错误记录")
-                }
-            }
+//
 
         }
     }
