@@ -57,7 +57,7 @@ class VersionCodeViewModel : ViewModel() {
                             _uiState.value.copy(fetchResultUiState = FetchResultUiState.VersionSame)
 //                        让Toast有时间先生成一个消息框
 //                        Note: Toast的延时由Compose函数中的Toast来控制
-//                        这里只能保证hasSameVersionCode在相对长的时间内发生变化就足够了
+//                        这里只需保证fetchResultUiState修改即可
                         delay(100)
 
                         _uiState.value =
