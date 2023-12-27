@@ -35,7 +35,7 @@ class VersionCodeViewModel : ViewModel() {
 
     fun handleUpdateNewVersionCodeButtonClicked() {
         _uiState.value = _uiState.value.copy(localVersionCode = _uiState.value.onlineVersionCode)
-        _uiState.value = _uiState.value.copy(hasNewOnlineVersion = false)
+        _uiState.value = _uiState.value.copy(fetchResultUiState = FetchResultUiState.NoneFetch)
     }
 
     sealed class SealedFetchVersionCodeResult {
@@ -45,29 +45,34 @@ class VersionCodeViewModel : ViewModel() {
 
     fun checkNewVersionButtonClicked() {
         viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(fetchResultUiState = FetchResultUiState.NoneFetch)
             when (val result = fetchOnlineVersionCode()) {
                 is SealedFetchVersionCodeResult.Success -> {
                     val onlineVersionCode = result.versionCode
                     _uiState.value = _uiState.value.copy(onlineVersionCode = onlineVersionCode)
                     if (_uiState.value.localVersionCode == onlineVersionCode) {
                         println("无更新")
-                        _uiState.value = _uiState.value.copy(hasSameVersionCode = true)
+
+                        _uiState.value =
+                            _uiState.value.copy(fetchResultUiState = FetchResultUiState.VersionSame)
 //                        让Toast有时间先生成一个消息框
 //                        Note: Toast的延时由Compose函数中的Toast来控制
 //                        这里只能保证hasSameVersionCode在相对长的时间内发生变化就足够了
                         delay(100)
-                        _uiState.value = _uiState.value.copy(hasSameVersionCode = false)
+
+                        _uiState.value =
+                            _uiState.value.copy(fetchResultUiState = FetchResultUiState.NoneFetch)
                     } else {
-                        _uiState.value = _uiState.value.copy(hasNewOnlineVersion = true)
+
+                        _uiState.value = _uiState.value.copy(
+                            fetchResultUiState = FetchResultUiState.Success(onlineVersionCode)
+                        )
                     }
                 }
 
                 is SealedFetchVersionCodeResult.Failed -> {
-                    _uiState.value = _uiState.value.copy(
-                        hasFailedFetchOnlineResult = true,
-                        failedFetchedOnlineResult = result.reason,
-                        hasNewOnlineVersion = false
-                    )
+                    _uiState.value =
+                        _uiState.value.copy(fetchResultUiState = FetchResultUiState.Failed(result.reason))
                 }
             }
         }
@@ -78,9 +83,7 @@ class VersionCodeViewModel : ViewModel() {
     }
 
     fun clearFailedFetchedResult() {
-        _uiState.value = _uiState.value.copy(
-            hasFailedFetchOnlineResult = false, failedFetchedOnlineResult = ""
-        )
+        _uiState.value = _uiState.value.copy(fetchResultUiState = FetchResultUiState.NoneFetch)
     }
 
     private suspend fun fetchOnlineVersionCode(): SealedFetchVersionCodeResult {
