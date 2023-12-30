@@ -86,6 +86,8 @@ class VersionCodeViewModel : ViewModel() {
         _uiState.value = _uiState.value.copy(fetchResultUiState = FetchResultUiState.NoneFetch)
     }
 
+    class WebsiteRedesignException(reason: String) : Exception("网站改版提示：$reason")
+
     private suspend fun fetchOnlineVersionCode(): SealedFetchVersionCodeResult {
         updateFetchingState(true)
         return withContext(Dispatchers.IO) {
@@ -105,11 +107,13 @@ class VersionCodeViewModel : ViewModel() {
                     if (version != null) {
                         SealedFetchVersionCodeResult.Success(version)
                     } else {
-                        throw Exception("网站改版提示：找到版本信息位置却未找到信息")
+                        throw WebsiteRedesignException("找到版本信息位置却未找到信息")
                     }
                 } else {
-                    throw Exception("网站改版提示：未找到版本位置")
+                    throw WebsiteRedesignException("未找到版本位置")
                 }
+            } catch (e: WebsiteRedesignException) {
+                SealedFetchVersionCodeResult.Failed("${e.message}")
             } catch (e: Exception) {
                 SealedFetchVersionCodeResult.Failed("错误原因: ${e.message}")
             } finally {
