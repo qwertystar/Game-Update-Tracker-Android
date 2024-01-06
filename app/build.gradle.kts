@@ -9,7 +9,8 @@ android {
 
     defaultConfig {
         applicationId = "com.qwertystar.gameupdatetracker"
-        minSdk = 26
+        val newestWechatMinSdkCode = 23
+        minSdk = newestWechatMinSdkCode
         targetSdk = 34
         versionCode = 4
         versionName = "1.1.1"
