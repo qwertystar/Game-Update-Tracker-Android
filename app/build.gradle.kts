@@ -12,8 +12,8 @@ android {
         val newestWechatMinSdkCode = 23
         minSdk = newestWechatMinSdkCode
         targetSdk = 34
-        versionCode = 4
-        versionName = "1.1.1"
+        versionCode = 5
+        versionName = "1.1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -57,7 +57,7 @@ android {
 }
 
 dependencies {
-    implementation("org.jsoup:jsoup:1.17.1")
+    implementation("org.jsoup:jsoup:1.17.2")
 
 
     implementation("androidx.core:core-ktx:1.10.1")
