@@ -13,4 +13,10 @@
     <string name="app_name">Game Update Tracker</string>
     <string name="gamename" translatable="false">Mindustry</string>
     <string name="mindustry_anukendev_pvp">Mindustry is an open source tower defense game developed by AnukenDev with resource management as its core. Players need to build precise conveyor supply chains, provide ammo for the turrets, produce building materials, protect buildings and defend against enemies. They can also team up with friends in cross-platform multiplayer co-op games, or form PVP teams for competitive play, or develop blueprints in the sandbox editor.</string>
+    <string name="local_versioncode">Local version number</string>
+    <string name="online_versioncode">Online version number</string>
+    <string name="comfirmed_update_local_versioncode">Confirmed local version update</string>
+    <string name="clear_error_result">Clear error result</string>
+    <string name="no_update">No updates</string>
+    <string name="check_new_online_versioncode">Now check latest version</string>
 </resources>

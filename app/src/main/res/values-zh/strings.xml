@@ -12,4 +12,10 @@
     <string name="app_name_short">更新跟踪</string>
     <string name="app_name">游戏更新跟踪器</string>
     <string name="mindustry_anukendev_pvp">Mindustry是AnukenDev制作的一款以资源管理为核心的开源塔防游戏。玩家需要建造精密的传送带供应链，提供炮塔弹药，生产建筑材料，保护建筑并抵御敌人。也可以在跨平台多人合作游戏中与朋友一起战斗，或组队进行PVP比赛,或者在沙盒编辑器中研发蓝图。</string>
+    <string name="local_versioncode">本地版本号</string>
+    <string name="check_new_online_versioncode">现在查询最新版本号</string>
+    <string name="online_versioncode">在线版本号</string>
+    <string name="comfirmed_update_local_versioncode">已确认本地版本更新</string>
+    <string name="clear_error_result">清空错误记录</string>
+    <string name="no_update">无更新</string>
 </resources>

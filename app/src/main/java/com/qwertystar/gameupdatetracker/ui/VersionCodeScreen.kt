@@ -69,7 +69,7 @@ fun VersionCodeScreen(
         modifier = Modifier
             .padding(25.dp)
             .fillMaxWidth(),
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
@@ -113,11 +113,11 @@ fun VersionCodeLayout(
     ) {
         Column {
             OutlinedTextField(value = localVersion, onValueChange = onLocalVersionChange, label = {
-                Text(text = "本地版本号")
+                Text(text = stringResource(R.string.local_versioncode))
             })
             Row {
                 Button(onClick = checkNewVersion) {
-                    Text(text = "现在查询最新版本号")
+                    Text(text = stringResource(R.string.check_new_online_versioncode))
                 }
                 if (isFetching) {
                     CircularProgressIndicator()
@@ -132,7 +132,7 @@ fun VersionCodeLayout(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Text(
-                            text = "在线版本号",
+                            text = stringResource(R.string.online_versioncode),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(start = 16.dp)
@@ -150,7 +150,7 @@ fun VersionCodeLayout(
                         }
                     }
                     Button(onClick = updateNewVersion) {
-                        Text(text = "已确认本地版本更新")
+                        Text(text = stringResource(R.string.comfirmed_update_local_versioncode))
                     }
                 }
 
@@ -163,14 +163,17 @@ fun VersionCodeLayout(
                         )
                     }
                     Button(onClick = clearFailedFetchedResult) {
-                        Text(text = "清空错误记录")
+                        Text(text = stringResource(R.string.clear_error_result))
                     }
                 }
 
                 is FetchResultUiState.VersionSame -> {
                     //        Toast是系统级提示，未来应该使用SnackBar
 
-                    Toast.makeText(LocalContext.current, "无更新", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        LocalContext.current,
+                        stringResource(R.string.no_update), Toast.LENGTH_LONG
+                    ).show()
                 }
 
                 is FetchResultUiState.NoneFetch -> {
