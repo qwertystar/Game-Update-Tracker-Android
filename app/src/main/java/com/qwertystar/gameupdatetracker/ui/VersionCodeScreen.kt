@@ -39,27 +39,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.qwertystar.gameupdatetracker.R
 import com.qwertystar.gameupdatetracker.ui.theme.GameUpdateTrackerTheme
 
-// 定义fetch后界面的四种互斥状态
-sealed class FetchResultUiState {
-    data class Success(val versionCode: String) : FetchResultUiState()
-    data object VersionSame : FetchResultUiState()
-    data class Failed(val reason: String) : FetchResultUiState()
-    data object NoneFetch : FetchResultUiState()
-
-
-}
-
-data class VersionCodeUiState(
-
-    val localVersionCode: String = "",
-    val onlineVersionCode: String = "",
-    val isFetchingOnlineVersion: Boolean = false,
-
-//    fetch结果状态控制
-    val fetchResultUiState: FetchResultUiState = FetchResultUiState.NoneFetch
-)
-
-
 @Composable
 fun VersionCodeScreen(
     versionCodeViewModel: VersionCodeViewModel = viewModel()
